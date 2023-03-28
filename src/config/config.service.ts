@@ -55,6 +55,7 @@ class ConfigService {
   };
 
   public getTypeOrmConfig(): TypeOrmModuleOptions {
+    console.log(this.getValue('MYSQL_HOSTD'));
     return {
       type: 'mysql',
       host: this.getValue('MYSQL_HOSTD'),
