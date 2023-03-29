@@ -65,7 +65,7 @@ class ConfigService {
       database: this.getValue('MYSQL_DATABASED'),
       synchronize: false,
       entities: ['dist/**/*.entity.js'],
-      logging: false,
+      logging: true,
       migrationsTableName: 'migration',
 
       //migrations: [`migration/**/*{.ts,.js}`],
