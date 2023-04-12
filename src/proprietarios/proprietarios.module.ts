@@ -1,11 +1,11 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Proprietario } from './entities/proprietario.entity';
+import { teste } from './entities/proprietarios.entity';
 import { Module } from '@nestjs/common';
 import { ProprietariosService } from './proprietarios.service';
 import { ProprietariosController } from './proprietarios.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Proprietario])],
+  imports: [TypeOrmModule.forFeature([teste])],
   controllers: [ProprietariosController],
   providers: [ProprietariosService],
 })

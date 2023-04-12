@@ -63,11 +63,11 @@ class ConfigService {
       username: this.getValue('MYSQL_USERD'),
       password: this.getValue('MYSQL_PASSWORDD'),
       database: this.getValue('MYSQL_DATABASED'),
-      synchronize: false,
-      entities: ['dist/**/*.entity.js'],
+      //synchronize: true,
+      entities: [__dirname + '/../**/*.entity.{js,ts}'],
       logging: true,
-      migrationsTableName: 'migration',
-
+      //migrationsTableName: 'migration',
+      //autoLoadEntities: true,
       //migrations: [`migration/**/*{.ts,.js}`],
 
       // cli: {
