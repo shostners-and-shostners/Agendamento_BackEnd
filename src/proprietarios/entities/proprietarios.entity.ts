@@ -1,8 +1,10 @@
-import Pessoa from 'src/class/Pessoa';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity({ name: 'proprietarios' })
-export class teste {
+@Entity('Proprietarios')
+export class Proprietarios {
+  @PrimaryColumn()
+  id: number;
+
   @Column()
   nome: string;
 }

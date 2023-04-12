@@ -1,4 +1,4 @@
-import { teste } from './entities/proprietarios.entity';
+import { Proprietarios } from './entities/proprietarios.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -7,8 +7,8 @@ import { CreateProprietarioDto } from './dto/CreateProprietario.dto';
 @Injectable()
 export class ProprietariosService {
   constructor(
-    @InjectRepository(teste)
-    private proprietariosRepository: Repository<teste>,
+    @InjectRepository(Proprietarios)
+    private proprietariosRepository: Repository<Proprietarios>,
   ) {}
 
   async create(dados: CreateProprietarioDto) {
