@@ -1,4 +1,4 @@
-import { CreateProprietarioDto } from './dto/CreateProprietario.dto';
+import { CriarProprietarioDto } from './dto/CriarProprietario.dto';
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ProprietariosService } from './proprietarios.service';
 
@@ -7,7 +7,7 @@ export class ProprietariosController {
   constructor(private readonly proprietariosService: ProprietariosService) {}
 
   @Post('/criar')
-  async create(@Body() createProprietarioDto: CreateProprietarioDto) {
+  async create(@Body() createProprietarioDto: CriarProprietarioDto) {
     return await this.proprietariosService.create(createProprietarioDto);
   }
 

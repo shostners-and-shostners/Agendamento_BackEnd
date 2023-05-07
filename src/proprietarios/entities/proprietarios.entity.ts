@@ -1,10 +1,5 @@
+import Pessoa from 'src/class/Pessoa';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity('Proprietarios')
-export class Proprietarios {
-  @PrimaryColumn()
-  id: number;
-
-  @Column()
-  nome: string;
-}
+export class Proprietarios extends Pessoa {}
