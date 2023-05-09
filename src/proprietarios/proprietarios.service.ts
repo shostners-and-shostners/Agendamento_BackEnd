@@ -1,44 +1,54 @@
 import { Proprietarios } from './entities/proprietarios.entity';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CriarProprietarioDto } from './dto/CriarProprietario.dto';
 import Hashing from 'src/class/hashing';
-
-let hash: Hashing;
+import VerificaSeExiste from 'src/class/VerificaSeExist';
 
 @Injectable()
 export class ProprietariosService {
+  hash: Hashing;
+  verificador: VerificaSeExiste;
   constructor(
     @InjectRepository(Proprietarios)
     private proprietariosRepository: Repository<Proprietarios>,
   ) {
-    hash = new Hashing();
+    this.hash = new Hashing();
+    this.verificador = new VerificaSeExiste();
   }
 
   async create(dados: CriarProprietarioDto) {
-    const jaCadastrado: number = await this.proprietariosRepository.count({
-      where: [
-        { telefone: dados.telefone },
-        { email: dados.email },
-        { cpf: dados.cpf },
-      ],
-    });
+    //verifica se já esta cadastrado
+    await this.verificador.proprietarioJaExiste(
+      this.proprietariosRepository,
+      dados,
+    );
+    //faz o hash da senha
+    dados.senha = await this.hash.hashPass(dados.senha);
 
-    if (jaCadastrado != 0) {
-      return 'já cadastrado';
-    }
+    const novoProprietario: Proprietarios =
+      await this.proprietariosRepository.save(dados);
 
-    dados.senha = await hash.hashPass(dados.senha);
+    delete novoProprietario['senha'];
+    return novoProprietario;
+  }
 
-    let prop = this.proprietariosRepository.create(dados);
-    prop = await this.proprietariosRepository.save(prop);
-
-    delete prop['senha'];
-    return prop;
+  async Update() {
+    return this.proprietariosRepository.find();
   }
 
   async getAll() {
     return this.proprietariosRepository.find();
   }
+
+  async buscarUmPorEmail(email: string) {
+    const prop = await this.proprietariosRepository.findOne({
+      where: { email },
+    });
+    if (!prop) throw new NotFoundException();
+    return prop;
+  }
+
+  
 }

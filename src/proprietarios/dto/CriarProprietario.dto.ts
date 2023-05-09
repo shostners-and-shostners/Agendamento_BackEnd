@@ -6,9 +6,10 @@ import {
   IsString,
   MinLength,
 } from 'class-validator';
-import CriarPessoaDto from 'src/class/CriarPessoa.dto';
 
 export class CriarProprietarioDto {
+  id: number;
+
   @IsString()
   @IsNotEmpty()
   nome: string;

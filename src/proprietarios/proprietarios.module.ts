@@ -8,5 +8,6 @@ import { ProprietariosController } from './proprietarios.controller';
   imports: [TypeOrmModule.forFeature([Proprietarios])],
   controllers: [ProprietariosController],
   providers: [ProprietariosService],
+  exports: [ProprietariosService],
 })
 export class ProprietariosModule {}
