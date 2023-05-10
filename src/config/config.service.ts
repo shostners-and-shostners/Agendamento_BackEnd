@@ -12,7 +12,7 @@ class ConfigService {
     if (!value && throwOnMissing) {
       throw new Error(`config error - missing env.${key}`);
     } else {
-      //console.log(`env.${key} ${this.env[key]}  OK `);
+      console.log(`env.${key} ${this.env[key]}  OK `);
     }
 
     return value;
