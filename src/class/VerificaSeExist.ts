@@ -13,10 +13,13 @@ export default class VerificaSeExiste {
       ],
     });
 
+    console.log(achado);
+
     if (achado) {
       if (achado.telefone == dto.telefone)
         msg.push(`Telefone ${this.JAEXISTE}`);
-      if (achado.email == dto.email) msg.push(`Email ${this.JAEXISTE}`);
+      if (achado.email.toLowerCase() == dto.email.toLowerCase())
+        msg.push(`Email ${this.JAEXISTE}`);
       if (achado.cpf == dto.cpf) msg.push(`Cpf ${this.JAEXISTE}`);
       throw new AlreadyExist(msg);
     }
