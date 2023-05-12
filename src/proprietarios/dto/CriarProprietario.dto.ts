@@ -31,23 +31,23 @@ export class CriarProprietarioDto {
   cpf: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   uf: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   cidade: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   bairro: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   logradouro: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   numero: string;
 
   @IsString()

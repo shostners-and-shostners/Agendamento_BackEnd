@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CriarProprietarioDto } from './dto/CriarProprietario.dto';
 import Hashing from 'src/class/hashing';
 import VerificaSeExiste from 'src/class/VerificaSeExist';
+import { UpdateProprietarioDto } from './dto/UpdateProprietario.dto';
 
 @Injectable()
 export class ProprietariosService {
@@ -34,14 +35,22 @@ export class ProprietariosService {
     return novoProprietario;
   }
 
-  async Update() {
-    return this.proprietariosRepository.find();
+  async Update(id: number, data: UpdateProprietarioDto) {
+    const prop = this.proprietariosRepository.findBy({ id });
+    if (!prop) throw new NotFoundException();
+    const alterado = await this.proprietariosRepository.update(id, data);
+    return this.proprietariosRepository.findBy({ id });
   }
 
   async getAll() {
     return this.proprietariosRepository.find();
   }
 
+  pegarUm(id: number) {
+    const prop = this.proprietariosRepository.findBy({ id });
+    if (!prop) throw new NotFoundException();
+    return prop;
+  }
   async buscarUmPorEmail(email: string) {
     const prop = await this.proprietariosRepository.findOne({
       where: { email },
@@ -49,6 +58,4 @@ export class ProprietariosService {
     if (!prop) throw new NotFoundException();
     return prop;
   }
-
-  
 }

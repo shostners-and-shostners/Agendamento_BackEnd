@@ -26,7 +26,7 @@ export class AuthService {
   }
 
   async loginProprietario(prop: any) {
-    const payload = { email: prop.email, id: prop.id };
+    const payload = { email: prop.email, id: prop.id, role: 'Prop' };
     return {
       token: this.propJWTService.sign(payload),
     };

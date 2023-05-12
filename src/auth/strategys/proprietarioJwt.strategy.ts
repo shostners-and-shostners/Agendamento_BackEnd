@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
@@ -14,6 +14,8 @@ export class ProprietarioJwt extends PassportStrategy(Strategy, 'jwtProp') {
 
   async validate(payload: any) {
     console.log(payload);
-    return { id: payload.id, email: payload.email };
+    if (payload.role == 'Prop')
+      return { id: payload.id, email: payload.email, role: payload.role };
+    else console.log('negado');
   }
 }
