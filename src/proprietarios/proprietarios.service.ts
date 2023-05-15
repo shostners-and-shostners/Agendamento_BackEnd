@@ -43,11 +43,13 @@ export class ProprietariosService {
   }
 
   async getAll() {
+    console.log(this.hash.pegarCharsAleatorios(6));
     return this.proprietariosRepository.find();
   }
 
-  pegarUm(id: number) {
-    const prop = this.proprietariosRepository.findBy({ id });
+  async pegarUm(id: number) {
+    const prop = await this.proprietariosRepository.findOne({ where: { id } });
+    console.log(prop);
     if (!prop) throw new NotFoundException();
     return prop;
   }
@@ -55,6 +57,7 @@ export class ProprietariosService {
     const prop = await this.proprietariosRepository.findOne({
       where: { email },
     });
+
     if (!prop) throw new NotFoundException();
     return prop;
   }

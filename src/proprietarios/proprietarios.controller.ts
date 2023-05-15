@@ -32,7 +32,7 @@ export class ProprietariosController {
 
   @Get('/')
   async getAll() {
-    return await 'this.proprietariosService.getAll();';
+    return await this.proprietariosService.getAll();
   }
 
   @Get('/pegarum')
