@@ -1,6 +1,6 @@
 import { Estabelecimentos } from './../../estabelecimento/entities/estabelecimento.entity';
 import Pessoa from 'src/class/Pessoa';
-import { Column, Entity, OneToMany, PrimaryColumn, JoinColumn } from 'typeorm';
+import { Entity, OneToMany, JoinColumn } from 'typeorm';
 
 @Entity('Proprietarios')
 export class Proprietarios extends Pessoa {

@@ -38,7 +38,7 @@ export class ProprietariosService {
   async Update(id: number, data: UpdateProprietarioDto) {
     const prop = this.proprietariosRepository.findBy({ id });
     if (!prop) throw new NotFoundException();
-    const alterado = await this.proprietariosRepository.update(id, data);
+    await this.proprietariosRepository.update(id, data);
     return this.proprietariosRepository.findBy({ id });
   }
 

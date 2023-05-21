@@ -1,6 +1,14 @@
+import { HorariosEstabelecimento } from './horarios_estabelecimento.entity';
 import Identificadores from 'src/class/Identificadores';
 import { Proprietarios } from 'src/proprietarios/entities/proprietarios.entity';
-import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  Unique,
+} from 'typeorm';
 
 @Entity('Estabelecimentos')
 export class Estabelecimentos extends Identificadores {
@@ -39,4 +47,11 @@ export class Estabelecimentos extends Identificadores {
   })
   @JoinColumn()
   proprietarios: Proprietarios;
+
+  @OneToMany(
+    () => HorariosEstabelecimento,
+    (horario) => horario.estabelecimento,
+  )
+  @JoinColumn()
+  horarios: HorariosEstabelecimento[];
 }

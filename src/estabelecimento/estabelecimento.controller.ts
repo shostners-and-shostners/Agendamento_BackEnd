@@ -1,4 +1,8 @@
 import {
+  HorarioDiaSemanaDTO,
+  HorariosEstabelecimentoDTO,
+} from './dto/create-horarios_estabelecimento.dto';
+import {
   Controller,
   Get,
   Post,
@@ -8,11 +12,15 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { EstabelecimentoService } from './estabelecimento.service';
 import { CreateEstabelecimentoDto } from './dto/create-estabelecimento.dto';
 import { UpdateEstabelecimentoDto } from './dto/update-estabelecimento.dto';
 import { PropJwtAuthGuard } from 'src/auth/guards/propJwtAuthGuard.guard';
+import { identity } from 'rxjs';
+import { FindOneParams } from 'src/class/findOneParams';
 
 @Controller('estabelecimento')
 export class EstabelecimentoController {
@@ -37,21 +45,27 @@ export class EstabelecimentoController {
     return this.estabelecimentoService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.estabelecimentoService.findOne(+id);
+  @UseGuards(PropJwtAuthGuard)
+  @Get('/prop')
+  async pegarEstabelicimentosProp(@Req() { user }) {
+    return await this.estabelecimentoService.pegarEstabelicimento(user.id);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateEstabelecimentoDto: UpdateEstabelecimentoDto,
+  @UseGuards(PropJwtAuthGuard)
+  @Patch('/update')
+  async update(
+    @Query('id', ParseIntPipe) id: number,
+    @Body() dados: UpdateEstabelecimentoDto,
   ) {
-    return this.estabelecimentoService.update(+id, updateEstabelecimentoDto);
+    return this.estabelecimentoService.update(id, dados);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.estabelecimentoService.remove(+id);
+  @UseGuards(PropJwtAuthGuard)
+  @Post('/setar_horarios')
+  async setarHorarios(
+    @Query('id', ParseIntPipe) id: number,
+    @Body() dados: HorariosEstabelecimentoDTO,
+  ) {
+    return this.estabelecimentoService.setarHorarios(id, dados);
   }
 }
