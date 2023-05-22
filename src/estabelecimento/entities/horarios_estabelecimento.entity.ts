@@ -19,7 +19,7 @@ export class HorariosEstabelecimento extends Identificadores {
   @Column({ length: 10 })
   fim: string;
 
-  @ManyToOne(() => Estabelecimentos, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Estabelecimentos, { onDelete: 'CASCADE', lazy: true })
   @JoinColumn({ name: 'estabelecimentosId' })
   estabelecimento: Estabelecimentos;
 }

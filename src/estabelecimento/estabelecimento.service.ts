@@ -1,8 +1,5 @@
-import {
-  HorarioDiaSemanaDTO,
-  HorariosEstabelecimentoDTO,
-} from './dto/create-horarios_estabelecimento.dto';
-import { HttpException, Injectable } from '@nestjs/common';
+import { HorarioDiaSemanaDTO } from './dto/create-horarios_estabelecimento.dto';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { CreateEstabelecimentoDto } from './dto/create-estabelecimento.dto';
 import { UpdateEstabelecimentoDto } from './dto/update-estabelecimento.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,6 +9,7 @@ import { ProprietariosService } from 'src/proprietarios/proprietarios.service';
 import Hashing from 'src/class/hashing';
 import { HorariosEstabelecimento } from './entities/horarios_estabelecimento.entity';
 import { plainToClass } from 'class-transformer';
+import { VerificarHorarios } from 'src/class/ValidarHorarios';
 
 @Injectable()
 export class EstabelecimentoService {
@@ -22,40 +20,65 @@ export class EstabelecimentoService {
     private readonly propService: ProprietariosService,
     @InjectRepository(HorariosEstabelecimento)
     private horariosRepo: Repository<HorariosEstabelecimento>,
+    private verificaHorario: VerificarHorarios,
   ) {
     this.hash = new Hashing();
   }
   async create(dados: CreateEstabelecimentoDto, id: number) {
     const prop = await this.propService.pegarUm(id);
-    let esta: any;
-    console.log(esta);
+    let esta: Estabelecimentos | undefined;
     let uud;
     do {
       uud = await this.hash.pegarCharsAleatorios(6);
-      console.log(uud);
       esta = await this.estabeRepo.findOne({ where: { uid: uud } });
-    } while (esta != null);
+    } while (esta);
+
     dados.uid = uud;
 
     const novoEstabelecimento = this.estabeRepo.create(dados);
     novoEstabelecimento.proprietarios = prop;
 
-    return await this.estabeRepo.save(novoEstabelecimento);
+    this.verificaHorario.validarHorarios(dados.horarios);
+    const horariosCriados = this.horariosRepo.create(dados.horarios);
+
+    const estabeCriado: Estabelecimentos = await this.estabeRepo.save(
+      novoEstabelecimento,
+    );
+
+    horariosCriados.forEach((hor) => {
+      hor.estabelecimento = estabeCriado;
+    });
+
+    await this.horariosRepo.save(horariosCriados);
+
+    return await this.estabeRepo.findOne({ where: { uid: estabeCriado.uid } });
   }
 
   async findAll() {
     return await this.estabeRepo.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} estabelecimento`;
-  }
-
   async update(idEstabe: number, dados: UpdateEstabelecimentoDto) {
-    const estabe = await this.estabeRepo.findOne({ where: { id: idEstabe } });
-    if (!estabe) throw new HttpException('Estabelecimento não encontrado', 404);
-    await this.estabeRepo.update(estabe, dados);
-    return await this.estabeRepo.findOne({ where: { id: idEstabe } });
+    const estabe = await this.verificaSeExiste(idEstabe);
+
+    if (dados.horarios) {
+      this.verificaHorario.validarHorarios(dados.horarios);
+      const stabHorarios = await this.horariosRepo.find({
+        where: { estabelecimento: estabe },
+      });
+      console.log(stabHorarios);
+      if (stabHorarios) await this.horariosRepo.remove(stabHorarios);
+      const horariosCriados = this.horariosRepo.create(dados.horarios);
+      horariosCriados.forEach((hor) => {
+        hor.estabelecimento = estabe;
+      });
+      await this.horariosRepo.save(horariosCriados);
+      delete dados.horarios;
+    }
+
+    console.log(dados);
+    await this.estabeRepo.update(estabe.id, dados);
+    return await this.estabeRepo.findOne({ where: { id: estabe.id } });
   }
 
   async pegarEstabelicimento(id: number) {
@@ -64,19 +87,24 @@ export class EstabelecimentoService {
   }
 
   async verificaSeExiste(id: number): Promise<Estabelecimentos> {
-    const esta = await this.estabeRepo.findOne({ where: { id } });
+    const esta = await this.estabeRepo.findOne({
+      loadEagerRelations: false,
+      where: { id },
+    });
     if (!esta) throw new HttpException('Estabelecimento não encontrado', 404);
     return esta;
   }
 
-  async setarHorarios(id: number, dados: HorariosEstabelecimentoDTO) {
-    const esta = await this.verificaSeExiste(id);
+  async pegarPorUiDD(uidd: string) {
+    const esta = await this.estabeRepo.findOne({
+      loadEagerRelations: true,
+      where: {
+        uid: uidd,
+      },
+    });
 
-    const horarios: HorariosEstabelecimento[] = plainToClass(
-      HorariosEstabelecimento,
-      dados.horarios,
-    );
-    esta.horarios = horarios;
+    if (!esta) throw new HttpException('Estabelecimento não encontrado', 404);
+
     return esta;
   }
 }

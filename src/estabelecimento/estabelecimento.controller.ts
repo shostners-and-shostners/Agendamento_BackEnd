@@ -1,7 +1,4 @@
-import {
-  HorarioDiaSemanaDTO,
-  HorariosEstabelecimentoDTO,
-} from './dto/create-horarios_estabelecimento.dto';
+import { HorarioDiaSemanaDTO } from './dto/create-horarios_estabelecimento.dto';
 import {
   Controller,
   Get,
@@ -19,8 +16,6 @@ import { EstabelecimentoService } from './estabelecimento.service';
 import { CreateEstabelecimentoDto } from './dto/create-estabelecimento.dto';
 import { UpdateEstabelecimentoDto } from './dto/update-estabelecimento.dto';
 import { PropJwtAuthGuard } from 'src/auth/guards/propJwtAuthGuard.guard';
-import { identity } from 'rxjs';
-import { FindOneParams } from 'src/class/findOneParams';
 
 @Controller('estabelecimento')
 export class EstabelecimentoController {
@@ -51,6 +46,12 @@ export class EstabelecimentoController {
     return await this.estabelecimentoService.pegarEstabelicimento(user.id);
   }
 
+  @Get('/:UIDD')
+  async pegarPorUIDD(@Param('UIDD') uidd: string) {
+    console.log(uidd);
+    return await this.estabelecimentoService.pegarPorUiDD(uidd);
+  }
+
   @UseGuards(PropJwtAuthGuard)
   @Patch('/update')
   async update(
@@ -60,12 +61,12 @@ export class EstabelecimentoController {
     return this.estabelecimentoService.update(id, dados);
   }
 
-  @UseGuards(PropJwtAuthGuard)
-  @Post('/setar_horarios')
-  async setarHorarios(
-    @Query('id', ParseIntPipe) id: number,
-    @Body() dados: HorariosEstabelecimentoDTO,
-  ) {
-    return this.estabelecimentoService.setarHorarios(id, dados);
-  }
+  // @UseGuards(PropJwtAuthGuard)
+  // @Post('/setar_horarios')
+  // async setarHorarios(
+  //   @Query('id', ParseIntPipe) id: number,
+  //   @Body() dados: HorariosEstabelecimentoDTO,
+  // ) {
+  //   return this.estabelecimentoService.setarHorarios(id, dados);
+  // }
 }

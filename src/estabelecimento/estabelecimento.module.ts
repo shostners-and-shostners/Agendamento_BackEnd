@@ -6,6 +6,7 @@ import { Estabelecimentos } from './entities/estabelecimento.entity';
 import { ProprietariosService } from 'src/proprietarios/proprietarios.service';
 import { ProprietariosModule } from 'src/proprietarios/proprietarios.module';
 import { HorariosEstabelecimento } from './entities/horarios_estabelecimento.entity';
+import { VerificarHorarios } from 'src/class/ValidarHorarios';
 
 @Module({
   imports: [
@@ -13,6 +14,6 @@ import { HorariosEstabelecimento } from './entities/horarios_estabelecimento.ent
     ProprietariosModule,
   ],
   controllers: [EstabelecimentoController],
-  providers: [EstabelecimentoService],
+  providers: [EstabelecimentoService, VerificarHorarios],
 })
 export class EstabelecimentoModule {}

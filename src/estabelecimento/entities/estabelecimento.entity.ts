@@ -51,6 +51,7 @@ export class Estabelecimentos extends Identificadores {
   @OneToMany(
     () => HorariosEstabelecimento,
     (horario) => horario.estabelecimento,
+    { eager: true },
   )
   @JoinColumn()
   horarios: HorariosEstabelecimento[];

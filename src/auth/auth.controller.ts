@@ -24,8 +24,8 @@ export class AuthController {
   }
 
   @UseGuards(PropJwtAuthGuard)
-  @Get('/')
-  teste() {
-    return 'this.authService.loginProprietario(user);';
+  @Get('/testePropToken')
+  teste(@Req() { user }) {
+    return user;
   }
 }

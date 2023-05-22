@@ -30,6 +30,13 @@ export class ProprietariosController {
     return this.proprietariosService.Update(user.id, data);
   }
 
+  @UseGuards(PropJwtAuthGuard)
+  @Get('/perfil')
+  async perfil(@Req() { user }) {
+    console.log(user);
+    return this.proprietariosService.pegarUm(user.id);
+  }
+
   @Get('/')
   async getAll() {
     return await this.proprietariosService.getAll();
@@ -37,7 +44,6 @@ export class ProprietariosController {
 
   @Get('/pegarum')
   async getOne(@Query('id') id) {
-    console.log('teste ' + id);
     return await this.proprietariosService.pegarUm(id);
   }
 }

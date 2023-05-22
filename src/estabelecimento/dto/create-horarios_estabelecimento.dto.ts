@@ -2,6 +2,7 @@ import {
   ArrayNotEmpty,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -9,11 +10,11 @@ import { Type } from 'class-transformer';
 
 enum DiaSemana {
   SEGUNDA = 'segunda',
-  TERCA = 'terca',
+  TERCA = 'terça',
   QUARTA = 'quarta',
   QUINTA = 'quinta',
   SEXTA = 'sexta',
-  SABADO = 'sabado',
+  SABADO = 'sábado',
   DOMINGO = 'domingo',
 }
 
@@ -27,11 +28,13 @@ export class HorarioDiaSemanaDTO {
 
   @IsNotEmpty()
   fim: string;
-}
 
-export class HorariosEstabelecimentoDTO {
-  @ArrayNotEmpty()
-  @ValidateNested({ each: true })
-  @Type(() => HorarioDiaSemanaDTO)
-  horarios: HorarioDiaSemanaDTO[];
+  @IsOptional()
+  id: number;
+
+  @IsOptional()
+  createdAt: string;
+
+  @IsOptional()
+  updateAt: string;
 }

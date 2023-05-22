@@ -1,11 +1,15 @@
+import { Type } from 'class-transformer';
 import {
+  ArrayNotEmpty,
   IsEmail,
   IsNotEmpty,
   IsOptional,
   IsPhoneNumber,
   IsString,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
+import { HorarioDiaSemanaDTO } from './create-horarios_estabelecimento.dto';
 
 export class CreateEstabelecimentoDto {
   id: number;
@@ -41,4 +45,9 @@ export class CreateEstabelecimentoDto {
   @IsString()
   @IsOptional()
   complemento: string;
+
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => HorarioDiaSemanaDTO)
+  horarios: HorarioDiaSemanaDTO[];
 }
