@@ -1,5 +1,11 @@
+import { locationImgEstabe } from 'src/class/strings';
 import { HorarioDiaSemanaDTO } from './dto/create-horarios_estabelecimento.dto';
-import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateEstabelecimentoDto } from './dto/create-estabelecimento.dto';
 import { UpdateEstabelecimentoDto } from './dto/update-estabelecimento.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,6 +16,8 @@ import Hashing from 'src/class/hashing';
 import { HorariosEstabelecimento } from './entities/horarios_estabelecimento.entity';
 import { plainToClass } from 'class-transformer';
 import { VerificarHorarios } from 'src/class/ValidarHorarios';
+import { deleteFile } from 'src/class/file-upload.utils';
+import { FuncionarioService } from 'src/funcionario/funcionario.service';
 
 @Injectable()
 export class EstabelecimentoService {
@@ -66,7 +74,7 @@ export class EstabelecimentoService {
       const stabHorarios = await this.horariosRepo.find({
         where: { estabelecimento: estabe },
       });
-      console.log(stabHorarios);
+
       if (stabHorarios) await this.horariosRepo.remove(stabHorarios);
       const horariosCriados = this.horariosRepo.create(dados.horarios);
       horariosCriados.forEach((hor) => {
@@ -81,9 +89,13 @@ export class EstabelecimentoService {
     return await this.estabeRepo.findOne({ where: { id: estabe.id } });
   }
 
-  async pegarEstabelicimento(id: number) {
-    const esta = await this.verificaSeExiste(id);
-    return esta;
+  async pegarEstabelicimentosProp(id: number) {
+    //await this.verificaSeExiste(id);
+    const estabs = this.estabeRepo.find({
+      where: { proprietariosId: id },
+      relations: ['horarios'],
+    });
+    return estabs;
   }
 
   async verificaSeExiste(id: number): Promise<Estabelecimentos> {
@@ -95,7 +107,7 @@ export class EstabelecimentoService {
     return esta;
   }
 
-  async pegarPorUiDD(uidd: string) {
+  async pegarPorUiDD(uidd: string, file?: Express.Multer.File) {
     const esta = await this.estabeRepo.findOne({
       loadEagerRelations: true,
       where: {
@@ -103,8 +115,30 @@ export class EstabelecimentoService {
       },
     });
 
-    if (!esta) throw new HttpException('Estabelecimento não encontrado', 404);
+    if (!esta) {
+      if (file) deleteFile('./' + file.path);
+      throw new NotFoundException('Estabelecimento não existe');
+    }
 
     return esta;
+  }
+
+  async colocarLogo(uid: string, file: Express.Multer.File) {
+    const estabe = await this.pegarPorUiDD(uid, file);
+    console.log('Teste');
+    if (file) {
+      if (estabe.imageUrl != 'logoEstabelecimento.png')
+        deleteFile(locationImgEstabe + estabe.imageUrl);
+
+      estabe.imageUrl = file.filename;
+      delete estabe.horarios;
+      await this.estabeRepo.update(estabe.id, estabe);
+      return estabe;
+    } else {
+      throw new HttpException(
+        { msg: 'Arquivo não foi enviado corretamente ' },
+        400,
+      );
+    }
   }
 }

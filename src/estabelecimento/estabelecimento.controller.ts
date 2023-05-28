@@ -22,26 +22,18 @@ import { UpdateEstabelecimentoDto } from './dto/update-estabelecimento.dto';
 import { PropJwtAuthGuard } from 'src/auth/guards/propJwtAuthGuard.guard';
 import { locationImgEstabe } from 'src/class/strings';
 import { editFileName, imageFileFilter } from 'src/class/file-upload.utils';
+import { FuncionarioService } from 'src/funcionario/funcionario.service';
 
 @Controller('estabelecimento')
 export class EstabelecimentoController {
   constructor(
     private readonly estabelecimentoService: EstabelecimentoService,
+    private readonly funcionarioService: FuncionarioService,
   ) {}
 
   @UseGuards(PropJwtAuthGuard)
   @Post('/criar')
-  @UseInterceptors(
-    FileInterceptor('avatar', {
-      storage: diskStorage({
-        destination: locationImgEstabe,
-        filename: editFileName,
-      }),
-      fileFilter: imageFileFilter,
-    }),
-  )
   async create(
-    @UploadedFile() file: Express.Multer.File,
     @Body() createEstabelecimentoDto: CreateEstabelecimentoDto,
     @Req() { user },
   ) {
@@ -49,6 +41,24 @@ export class EstabelecimentoController {
       createEstabelecimentoDto,
       user.id,
     );
+  }
+
+  @UseGuards(PropJwtAuthGuard)
+  @UseInterceptors(
+    FileInterceptor('logo', {
+      storage: diskStorage({
+        destination: locationImgEstabe,
+        filename: editFileName,
+      }),
+      fileFilter: imageFileFilter,
+    }),
+  )
+  @Post('/image/:UIDD')
+  async uploadImage(
+    @Param('UIDD') uidd: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.estabelecimentoService.colocarLogo(uidd, file);
   }
 
   @Get()
@@ -59,7 +69,7 @@ export class EstabelecimentoController {
   @UseGuards(PropJwtAuthGuard)
   @Get('/prop')
   async pegarEstabelicimentosProp(@Req() { user }) {
-    return await this.estabelecimentoService.pegarEstabelicimento(user.id);
+    return await this.estabelecimentoService.pegarEstabelicimentosProp(user.id);
   }
 
   @Get('/:UIDD')
@@ -77,12 +87,9 @@ export class EstabelecimentoController {
     return this.estabelecimentoService.update(id, dados);
   }
 
-  // @UseGuards(PropJwtAuthGuard)
-  // @Post('/setar_horarios')
-  // async setarHorarios(
-  //   @Query('id', ParseIntPipe) id: number,
-  //   @Body() dados: HorariosEstabelecimentoDTO,
-  // ) {
-  //   return this.estabelecimentoService.setarHorarios(id, dados);
-  // }
+  @Get('todosFunc/:UIDD')
+  async pegarTodosFunc(@Param('UIDD') uidd: string) {
+    console.log(uidd);
+    return await this.funcionarioService.todosDeUmEstabelicimento(uidd);
+  }
 }

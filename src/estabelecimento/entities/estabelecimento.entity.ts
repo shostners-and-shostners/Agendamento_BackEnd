@@ -42,7 +42,7 @@ export class Estabelecimentos extends Identificadores {
   @Column()
   tema: string;
 
-  @Column()
+  @Column({ default: 'logoEstabelecimento.png' })
   imageUrl: string;
 
   @Column({ default: true })

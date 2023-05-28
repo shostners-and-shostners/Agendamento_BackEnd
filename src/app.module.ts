@@ -6,6 +6,7 @@ import { configService } from './config/config.service';
 import { ProprietariosModule } from './proprietarios/proprietarios.module';
 import { AuthModule } from './auth/auth.module';
 import { EstabelecimentoModule } from './estabelecimento/estabelecimento.module';
+import { FuncionarioModule } from './funcionario/funcionario.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { EstabelecimentoModule } from './estabelecimento/estabelecimento.module'
     ProprietariosModule,
     AuthModule,
     EstabelecimentoModule,
+    FuncionarioModule,
   ],
   controllers: [AppController],
   providers: [AppService],
