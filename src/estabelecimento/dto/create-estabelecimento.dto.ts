@@ -46,6 +46,13 @@ export class CreateEstabelecimentoDto {
   @IsOptional()
   complemento: string;
 
+  @IsString()
+  tema: string;
+
+  @IsString()
+  @IsOptional()
+  imageUrl: string;
+
   @ArrayNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => HorarioDiaSemanaDTO)

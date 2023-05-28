@@ -39,6 +39,12 @@ export class Estabelecimentos extends Identificadores {
   @Column()
   numero: string;
 
+  @Column()
+  tema: string;
+
+  @Column()
+  imageUrl: string;
+
   @Column({ default: true })
   visivel: boolean;
 

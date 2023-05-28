@@ -1,4 +1,6 @@
 import { HorarioDiaSemanaDTO } from './dto/create-horarios_estabelecimento.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 import {
   Controller,
   Get,
@@ -11,11 +13,15 @@ import {
   Req,
   Query,
   ParseIntPipe,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { EstabelecimentoService } from './estabelecimento.service';
 import { CreateEstabelecimentoDto } from './dto/create-estabelecimento.dto';
 import { UpdateEstabelecimentoDto } from './dto/update-estabelecimento.dto';
 import { PropJwtAuthGuard } from 'src/auth/guards/propJwtAuthGuard.guard';
+import { locationImgEstabe } from 'src/class/strings';
+import { editFileName, imageFileFilter } from 'src/class/file-upload.utils';
 
 @Controller('estabelecimento')
 export class EstabelecimentoController {
@@ -25,7 +31,17 @@ export class EstabelecimentoController {
 
   @UseGuards(PropJwtAuthGuard)
   @Post('/criar')
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      storage: diskStorage({
+        destination: locationImgEstabe,
+        filename: editFileName,
+      }),
+      fileFilter: imageFileFilter,
+    }),
+  )
   async create(
+    @UploadedFile() file: Express.Multer.File,
     @Body() createEstabelecimentoDto: CreateEstabelecimentoDto,
     @Req() { user },
   ) {
