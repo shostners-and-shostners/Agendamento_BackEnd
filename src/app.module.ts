@@ -7,6 +7,7 @@ import { ProprietariosModule } from './proprietarios/proprietarios.module';
 import { AuthModule } from './auth/auth.module';
 import { EstabelecimentoModule } from './estabelecimento/estabelecimento.module';
 import { FuncionarioModule } from './funcionario/funcionario.module';
+import { ServicosModule } from './servicos/servicos.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { FuncionarioModule } from './funcionario/funcionario.module';
     AuthModule,
     EstabelecimentoModule,
     FuncionarioModule,
+    ServicosModule,
   ],
   controllers: [AppController],
   providers: [AppService],
