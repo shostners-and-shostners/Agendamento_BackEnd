@@ -1,8 +1,7 @@
 import { IsNotEmpty, IsString, IsBoolean, IsOptional } from 'class-validator';
 
 export class CreateCategoriaDto {
-  @IsNotEmpty()
-  @IsString()
+  @IsOptional()
   UIDEstabelecimento: string;
 
   @IsNotEmpty()

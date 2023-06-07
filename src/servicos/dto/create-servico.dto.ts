@@ -4,7 +4,9 @@ import {
   IsNumber,
   IsBoolean,
   Min,
+  IsOptional,
 } from 'class-validator';
+import { CreateCategoriaDto } from './create-categoria.dto';
 
 export class CreateServicoDto {
   @IsNotEmpty()
@@ -31,7 +33,9 @@ export class CreateServicoDto {
   @IsString()
   readonly descricao: string;
 
-  @IsNotEmpty()
-  @IsNumber()
+  @IsOptional()
   readonly categoriaId: number;
+
+  @IsNotEmpty()
+  categoria: CreateCategoriaDto;
 }
