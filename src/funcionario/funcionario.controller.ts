@@ -34,6 +34,11 @@ export class FuncionarioController {
     return this.funcionarioService.verificaSeExisteId(user.id);
   }
 
+  @Get('servicos/:id')
+  servicos(@Param('id') id: string) {
+    return this.funcionarioService.servicos(+id);
+  }
+
   @Patch('/update')
   async update(
     @Query('id', ParseIntPipe) id: number,

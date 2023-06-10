@@ -110,7 +110,7 @@ export class FuncionarioService {
 
   async verificaSeExisteId(id: number) {
     const func = await this.funcRepo.findOne({
-      relations: ['expedientes', 'servicos'],
+      relations: ['expedientes', 'servicos', 'servicos.categoria'],
       where: { id },
     });
 
@@ -159,9 +159,10 @@ export class FuncionarioService {
       where: { funcionarioId: dados.funcionarioId, servicoId: dados.servicoId },
     });
     if (servFun) {
-      throw new NotFoundException(
-        'Serviço já está cadastrado para esse funcionario',
-      );
+      throw new NotFoundException({
+        message: 'Serviço já está cadastrado para esse funcionario',
+        serv,
+      });
     }
     return await this.servFunRepo.save(dados);
   }
@@ -178,5 +179,10 @@ export class FuncionarioService {
       );
     }
     await this.servFunRepo.remove(servFun);
+  }
+
+  async servicos(id: number) {
+    const fun = await this.verificaSeExisteId(id);
+    return fun.servicos;
   }
 }
