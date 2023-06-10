@@ -7,11 +7,18 @@ import { Funcionario } from './entities/funcionario.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { VerificarHorarios } from 'src/class/ValidarHorarios';
 import { EstabelecimentoModule } from 'src/estabelecimento/estabelecimento.module';
+import { FuncionarioServico } from './entities/funcionarioServico.entity';
+import { ServicosModule } from 'src/servicos/servicos.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Funcionario, ExpedienteFuncionario]),
+    TypeOrmModule.forFeature([
+      Funcionario,
+      ExpedienteFuncionario,
+      FuncionarioServico,
+    ]),
     forwardRef(() => EstabelecimentoModule),
+    ServicosModule,
   ],
   controllers: [FuncionarioController],
   providers: [FuncionarioService, VerificarHorarios],

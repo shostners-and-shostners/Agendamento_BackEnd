@@ -1,10 +1,13 @@
+import { ServicosService } from './../servicos/servicos.service';
 import { locationImgEstabe } from 'src/class/strings';
 import { HorarioDiaSemanaDTO } from './dto/create-horarios_estabelecimento.dto';
 import {
   BadRequestException,
   HttpException,
+  Inject,
   Injectable,
   NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 import { CreateEstabelecimentoDto } from './dto/create-estabelecimento.dto';
 import { UpdateEstabelecimentoDto } from './dto/update-estabelecimento.dto';
@@ -29,6 +32,8 @@ export class EstabelecimentoService {
     @InjectRepository(HorariosEstabelecimento)
     private horariosRepo: Repository<HorariosEstabelecimento>,
     private verificaHorario: VerificarHorarios,
+    @Inject(forwardRef(() => ServicosService))
+    private readonly servicoServ: ServicosService,
   ) {
     this.hash = new Hashing();
   }
@@ -140,5 +145,15 @@ export class EstabelecimentoService {
         400,
       );
     }
+  }
+
+  async pegarTodasCategorias(uid: string) {
+    await this.pegarPorUiDD(uid);
+    return await this.servicoServ.pegarTodasCatego(uid);
+  }
+
+  async pegarTodosServ(uid: string) {
+    await this.pegarPorUiDD(uid);
+    return await this.servicoServ.pegarTodosServ(uid);
   }
 }

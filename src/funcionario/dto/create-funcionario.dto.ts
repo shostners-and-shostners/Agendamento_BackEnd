@@ -9,6 +9,7 @@ import {
   IsPhoneNumber,
   ArrayNotEmpty,
   ValidateNested,
+  IsNumber,
 } from 'class-validator';
 
 export class CreateFuncionarioDto {
@@ -73,4 +74,9 @@ export class CreateFuncionarioDto {
   @ValidateNested({ each: true })
   @Type(() => HorarioDiaSemanaDTO)
   horarios: HorarioDiaSemanaDTO[];
+
+  @ArrayNotEmpty()
+  @IsOptional()
+  @IsNumber({}, { each: true })
+  servicoIds: number[];
 }

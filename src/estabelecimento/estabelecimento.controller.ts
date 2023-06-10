@@ -92,4 +92,14 @@ export class EstabelecimentoController {
     console.log(uidd);
     return await this.funcionarioService.todosDeUmEstabelicimento(uidd);
   }
+
+  @Get('todasCat/:UIDD')
+  async pegarTodosCat(@Param('UIDD') uidd: string) {
+    return await this.estabelecimentoService.pegarTodasCategorias(uidd);
+  }
+
+  @Get('todosServ/:UIDD')
+  async pegarTodosServ(@Param('UIDD') uidd: string) {
+    return await this.estabelecimentoService.pegarTodosServ(uidd);
+  }
 }

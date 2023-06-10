@@ -9,11 +9,13 @@ import { HorariosEstabelecimento } from './entities/horarios_estabelecimento.ent
 import { VerificarHorarios } from 'src/class/ValidarHorarios';
 import { FuncionarioService } from 'src/funcionario/funcionario.service';
 import { FuncionarioModule } from 'src/funcionario/funcionario.module';
+import { ServicosModule } from 'src/servicos/servicos.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Estabelecimentos, HorariosEstabelecimento]),
     ProprietariosModule,
+    ServicosModule,
     forwardRef(() => FuncionarioModule),
   ],
   controllers: [EstabelecimentoController],

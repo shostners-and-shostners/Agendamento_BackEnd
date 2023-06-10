@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Inject,
   forwardRef,
+  HttpStatus,
 } from '@nestjs/common';
 import { CreateFuncionarioDto } from './dto/create-funcionario.dto';
 import { UpdateFuncionarioDto } from './dto/update-funcionario.dto';
@@ -15,6 +16,9 @@ import { VerificarHorarios } from 'src/class/ValidarHorarios';
 import Hashing from 'src/class/hashing';
 import { EstabelecimentoService } from 'src/estabelecimento/estabelecimento.service';
 import { AlreadyExist } from 'src/exceptions/alreadyExist.exception';
+import { FuncionarioServico } from './entities/funcionarioServico.entity';
+import { ServicosService } from 'src/servicos/servicos.service';
+import { CreateFuncionarioServicoDto } from './dto/create-funcionarioServico.dto';
 
 @Injectable()
 export class FuncionarioService {
@@ -22,11 +26,15 @@ export class FuncionarioService {
   constructor(
     @InjectRepository(Funcionario)
     private funcRepo: Repository<Funcionario>,
+    @InjectRepository(FuncionarioServico)
+    private servFunRepo: Repository<FuncionarioServico>,
     @InjectRepository(ExpedienteFuncionario)
     private expediRepo: Repository<ExpedienteFuncionario>,
     private verificaHorario: VerificarHorarios,
     @Inject(forwardRef(() => EstabelecimentoService))
     private readonly estabService: EstabelecimentoService,
+    @Inject(ServicosService)
+    private readonly servicoServ: ServicosService,
   ) {
     this.hash = new Hashing();
   }
@@ -39,6 +47,18 @@ export class FuncionarioService {
       throw new AlreadyExist('Email já existe para estabelecimento');
 
     dados.senha = await this.hash.hashPass(dados.senha);
+    //verifica se ids servico existem
+    const funServs = [];
+    if (dados.servicoIds.length > 0) {
+      for (const servId of dados.servicoIds) {
+        const funServDto = new CreateFuncionarioServicoDto();
+        console.log(servId);
+        await this.servicoServ.acharServico(servId);
+        funServDto.servicoId = servId;
+        funServs.push(funServDto);
+      }
+    }
+
     const novoFunc = this.funcRepo.create(dados);
 
     this.verificaHorario.validarHorarios(dados.horarios);
@@ -51,6 +71,16 @@ export class FuncionarioService {
     });
 
     await this.expediRepo.save(horariosCriados);
+    //--------------------------FunServ
+    if (funServs.length > 0) {
+      const list = [];
+      funServs.forEach((item) => {
+        item.funcionarioId = funcCriado.id;
+        list.push(this.servFunRepo.create(item));
+      });
+      await this.servFunRepo.save(list);
+    }
+
     delete funcCriado['senha'];
     return await this.buscarPorEmail(
       funcCriado.UIDEstabelecimento,
@@ -80,14 +110,11 @@ export class FuncionarioService {
 
   async verificaSeExisteId(id: number) {
     const func = await this.funcRepo.findOne({
-      relations: ['expedientes'],
+      relations: ['expedientes', 'servicos'],
       where: { id },
     });
-    if (!func)
-      throw new HttpException(
-        'Funcionario não existe para esse estabelecimento',
-        404,
-      );
+
+    if (!func) throw new HttpException('Funcionario não existe', 404);
     return func;
   }
 
@@ -117,5 +144,39 @@ export class FuncionarioService {
     delete dados.horarios;
     await this.funcRepo.update(func.id, dados);
     return await this.verificaSeExisteId(func.id);
+  }
+
+  async adiconarServico(dados: CreateFuncionarioServicoDto) {
+    const serv = await this.servicoServ.acharServico(dados.servicoId);
+    const func = await this.verificaSeExisteId(dados.funcionarioId);
+    if (serv.UIDEstabelecimento != func.UIDEstabelecimento) {
+      throw new HttpException(
+        'Funcionario e serviço não são do mesmo estabelicimento',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const servFun = await this.servFunRepo.findOne({
+      where: { funcionarioId: dados.funcionarioId, servicoId: dados.servicoId },
+    });
+    if (servFun) {
+      throw new NotFoundException(
+        'Serviço já está cadastrado para esse funcionario',
+      );
+    }
+    return await this.servFunRepo.save(dados);
+  }
+
+  async removeServico(dados: CreateFuncionarioServicoDto) {
+    await this.servicoServ.acharServico(dados.servicoId);
+    await this.verificaSeExisteId(dados.funcionarioId);
+    const servFun = await this.servFunRepo.findOne({
+      where: { funcionarioId: dados.funcionarioId, servicoId: dados.servicoId },
+    });
+    if (!servFun) {
+      throw new NotFoundException(
+        'Serviço não encontrado para esse funcionario',
+      );
+    }
+    await this.servFunRepo.remove(servFun);
   }
 }

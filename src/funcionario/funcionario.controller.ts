@@ -10,11 +10,14 @@ import {
   ParseIntPipe,
   UseGuards,
   Req,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { FuncionarioService } from './funcionario.service';
 import { CreateFuncionarioDto } from './dto/create-funcionario.dto';
 import { UpdateFuncionarioDto } from './dto/update-funcionario.dto';
 import { FuncJwtAuthGuard } from 'src/auth/guards/funcJwtAuthGuard.guard';
+import { CreateFuncionarioServicoDto } from './dto/create-funcionarioServico.dto';
 
 @Controller('funcionario')
 export class FuncionarioController {
@@ -38,5 +41,16 @@ export class FuncionarioController {
   ) {
     console.log(id);
     return this.funcionarioService.update(id, dados);
+  }
+
+  @Post('adicionarServico')
+  adicionarServico(@Body() dados: CreateFuncionarioServicoDto) {
+    return this.funcionarioService.adiconarServico(dados);
+  }
+
+  @HttpCode(200)
+  @Post('removerServico')
+  async removerServico(@Body() dados: CreateFuncionarioServicoDto) {
+    return await this.funcionarioService.removeServico(dados);
   }
 }

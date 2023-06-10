@@ -63,6 +63,9 @@ export class ServicosService {
       dados.UIDEstabelecimento,
       dados.categoria,
     );
+    dados.categoria = cat;
+    await this.servRepo.update(id, dados);
+    return this.acharServico(id);
   }
 
   async acharCategoriaPorNome(UID: string, nome: string): Promise<Categoria> {
@@ -77,15 +80,23 @@ export class ServicosService {
 
   async acharServico(id: number) {
     const serv = await this.servRepo.findOne({ where: { id: id } });
-    if (!serv) throw new NotFoundException();
+    if (!serv)
+      throw new NotFoundException(`Serviço com o id: ${id} não encontrado `);
     return serv;
   }
 
-  update(id: number, updateServicoDto: UpdateServicoDto) {
-    return `This action updates a #${id} servico`;
+  async pegarTodos() {
+    return await this.servRepo.find({ relations: ['categoria'] });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} servico`;
+  async pegarTodasCatego(uid: string) {
+    return await this.categRepo.find({ where: { UIDEstabelecimento: uid } });
+  }
+
+  async pegarTodosServ(uid: string) {
+    return await this.servRepo.find({
+      relations: ['categoria'],
+      where: { UIDEstabelecimento: uid },
+    });
   }
 }

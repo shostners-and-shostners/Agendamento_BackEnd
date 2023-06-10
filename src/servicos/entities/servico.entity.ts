@@ -5,6 +5,8 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import {
   IsNotEmpty,
@@ -15,6 +17,7 @@ import {
   IsPositive,
 } from 'class-validator';
 import { Categoria } from './categoria.entity';
+import { Funcionario } from 'src/funcionario/entities/funcionario.entity';
 
 @Entity({ name: 'Servico' })
 export class Servico extends Identificadores {
@@ -52,4 +55,12 @@ export class Servico extends Identificadores {
   @ManyToOne(() => Categoria)
   @JoinColumn({ name: 'categoriaId' })
   categoria: Categoria;
+
+  @ManyToMany(() => Funcionario, (funcionario) => funcionario.servicos)
+  @JoinTable({
+    name: 'funcionario_servico',
+    joinColumns: [{ name: 'servicoId' }],
+    inverseJoinColumns: [{ name: 'funcionarioId' }],
+  })
+  funcionarios: Funcionario[];
 }

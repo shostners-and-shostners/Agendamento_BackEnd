@@ -7,8 +7,12 @@ import {
   UpdateDateColumn,
   OneToMany,
   JoinColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { ExpedienteFuncionario } from './expedienteFuncionario.entity';
+import { FuncionarioServico } from './funcionarioServico.entity';
+import { Servico } from 'src/servicos/entities/servico.entity';
 
 @Entity('Funcionario')
 export class Funcionario extends Identificadores {
@@ -60,4 +64,15 @@ export class Funcionario extends Identificadores {
   )
   @JoinColumn()
   expedientes: ExpedienteFuncionario[];
+
+  // @OneToMany(() => FuncionarioServico, (servico) => servico.funcionario)
+  // servico: FuncionarioServico[];
+
+  @ManyToMany(() => Servico, (servico) => servico.funcionarios)
+  @JoinTable({
+    name: 'funcionario_servico',
+    joinColumns: [{ name: 'funcionarioId' }],
+    inverseJoinColumns: [{ name: 'servicoId' }],
+  })
+  servicos: Servico[];
 }

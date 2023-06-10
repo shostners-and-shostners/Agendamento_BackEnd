@@ -15,6 +15,7 @@ import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { Repository } from 'typeorm';
 import { Categoria } from './entities/categoria.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateFuncionarioServicoDto } from 'src/funcionario/dto/create-funcionarioServico.dto';
 
 @Controller('servicos')
 export class ServicosController {
@@ -26,22 +27,17 @@ export class ServicosController {
   }
 
   @Get()
-  findAll() {
-    //return this.servicosService.findAll();
+  async pegarTodos() {
+    return await this.servicosService.pegarTodos();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.servicosService.acharServico(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.servicosService.acharServico(+id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateServicoDto: UpdateServicoDto) {
-    return this.servicosService.update(+id, updateServicoDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.servicosService.remove(+id);
+    return this.servicosService.editarServico(+id, updateServicoDto);
   }
 }
