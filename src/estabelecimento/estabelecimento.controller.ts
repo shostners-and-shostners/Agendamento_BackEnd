@@ -26,6 +26,7 @@ import { editFileName, imageFileFilter } from 'src/class/file-upload.utils';
 import { FuncionarioService } from 'src/funcionario/funcionario.service';
 import { ClienteService } from 'src/cliente/cliente.service';
 import { AgendamentoService } from 'src/agendamento/agendamento.service';
+import { DatasDto } from 'src/agendamento/dto/datas.dto';
 
 @Controller('estabelecimento')
 export class EstabelecimentoController {
@@ -116,7 +117,10 @@ export class EstabelecimentoController {
   }
 
   @Get('todosAgendamentos/:UIDD')
-  async pegarTodosAgendamentos(@Param('UIDD') uidd: string) {
-    return await this.agendaServ.todosDoEstabelicimento(uidd);
+  async pegarTodosAgendamentos(
+    @Param('UIDD') uidd: string,
+    @Body() datas: DatasDto,
+  ) {
+    return await this.agendaServ.todosDoEstabelicimento(uidd, datas);
   }
 }

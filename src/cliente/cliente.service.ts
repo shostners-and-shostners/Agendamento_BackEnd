@@ -7,6 +7,8 @@ import { Repository } from 'typeorm';
 import Hashing from 'src/class/hashing';
 import { EstabelecimentoService } from 'src/estabelecimento/estabelecimento.service';
 import { AlreadyExist } from 'src/exceptions/alreadyExist.exception';
+import { AgendamentoService } from 'src/agendamento/agendamento.service';
+import { DatasDto } from 'src/agendamento/dto/datas.dto';
 
 @Injectable()
 export class ClienteService {
@@ -16,6 +18,8 @@ export class ClienteService {
     private clienteRepo: Repository<Cliente>,
     @Inject(EstabelecimentoService)
     private readonly estabService: EstabelecimentoService,
+    @Inject(forwardRef(() => AgendamentoService))
+    private readonly agendaServ: AgendamentoService,
   ) {
     this.hash = new Hashing();
   }
@@ -27,6 +31,12 @@ export class ClienteService {
     );
     if (cli) throw new AlreadyExist('Email já existe para estabelecimento');
     dados.senha = await this.hash.hashPass(dados.senha);
+    const novoCliente = this.clienteRepo.create(dados);
+    const clienteCriado = await this.clienteRepo.save(novoCliente);
+    return clienteCriado;
+  }
+
+  async createAnoni(dados: CreateClienteDto) {
     const novoCliente = this.clienteRepo.create(dados);
     const clienteCriado = await this.clienteRepo.save(novoCliente);
     return clienteCriado;
@@ -71,5 +81,9 @@ export class ClienteService {
       where: { UIDEstabelecimento: uid },
     });
     return clientes;
+  }
+
+  async pegarAgendamentosDoClie(id: number, datas: DatasDto) {
+    return await this.agendaServ.todosDoClie(id, datas);
   }
 }

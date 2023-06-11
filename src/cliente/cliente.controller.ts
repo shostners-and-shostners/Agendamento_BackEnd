@@ -15,6 +15,8 @@ import { ClienteService } from './cliente.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { ClienteJwtAuthGuard } from 'src/auth/guards/ClienteJwtAuthGuard.guard';
+import { DatePipe } from 'src/class/date.pipe';
+import { DatasDto } from 'src/agendamento/dto/datas.dto';
 
 @Controller('cliente')
 export class ClienteController {
@@ -40,5 +42,19 @@ export class ClienteController {
   @Get('pegarPorId')
   porID(@Query('id', ParseIntPipe) id: number) {
     return this.clienteService.verificaSeExisteId(id);
+  }
+
+  @UseGuards(ClienteJwtAuthGuard)
+  @Get('todoAgendamentosToken')
+  todoAgendamentosToken(@Req() { user }, @Body() datas: DatasDto) {
+    return this.clienteService.pegarAgendamentosDoClie(user.id, datas);
+  }
+
+  @Get('todoAgendamentos')
+  todoAgendamentosT(
+    @Query('idCli', ParseIntPipe) idClie: number,
+    @Body() datas: DatasDto,
+  ) {
+    return this.clienteService.pegarAgendamentosDoClie(idClie, datas);
   }
 }

@@ -9,6 +9,7 @@ import { VerificarHorarios } from 'src/class/ValidarHorarios';
 import { EstabelecimentoModule } from 'src/estabelecimento/estabelecimento.module';
 import { FuncionarioServico } from './entities/funcionarioServico.entity';
 import { ServicosModule } from 'src/servicos/servicos.module';
+import { AgendamentoModule } from 'src/agendamento/agendamento.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { ServicosModule } from 'src/servicos/servicos.module';
       FuncionarioServico,
     ]),
     forwardRef(() => EstabelecimentoModule),
-    ServicosModule,
+    forwardRef(() => AgendamentoModule),
+    forwardRef(() => ServicosModule),
   ],
   controllers: [FuncionarioController],
   providers: [FuncionarioService, VerificarHorarios],

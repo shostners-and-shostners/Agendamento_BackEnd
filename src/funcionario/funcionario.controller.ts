@@ -18,6 +18,8 @@ import { CreateFuncionarioDto } from './dto/create-funcionario.dto';
 import { UpdateFuncionarioDto } from './dto/update-funcionario.dto';
 import { FuncJwtAuthGuard } from 'src/auth/guards/funcJwtAuthGuard.guard';
 import { CreateFuncionarioServicoDto } from './dto/create-funcionarioServico.dto';
+import { use } from 'passport';
+import { DatasDto } from 'src/agendamento/dto/datas.dto';
 
 @Controller('funcionario')
 export class FuncionarioController {
@@ -32,6 +34,20 @@ export class FuncionarioController {
   @Get('perfil')
   perfil(@Req() { user }) {
     return this.funcionarioService.verificaSeExisteId(user.id);
+  }
+
+  @UseGuards(FuncJwtAuthGuard)
+  @Get('todoAgendamentosToken')
+  todoAgendamentosToken(@Req() { user }, @Body() datas: DatasDto) {
+    return this.funcionarioService.pegarAgendamentosDoFunc(user.id, datas);
+  }
+
+  @Get('todoAgendamentos')
+  todoAgendamentosT(
+    @Query('idFunc', ParseIntPipe) idFunc: number,
+    @Body() datas: DatasDto,
+  ) {
+    return this.funcionarioService.pegarAgendamentosDoFunc(idFunc, datas);
   }
 
   @Get('servicos/:id')

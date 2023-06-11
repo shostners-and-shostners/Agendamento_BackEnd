@@ -6,6 +6,9 @@ import { CriarProprietarioDto } from './dto/CriarProprietario.dto';
 import Hashing from 'src/class/hashing';
 import VerificaSeExiste from 'src/class/VerificaSeExist';
 import { UpdateProprietarioDto } from './dto/UpdateProprietario.dto';
+import { response } from 'express';
+import { CreateAgendamentoADMDto } from 'src/agendamento/dto/create-agendamentoADM.dto';
+import { CreateClienteDto } from 'src/cliente/dto/create-cliente.dto';
 
 @Injectable()
 export class ProprietariosService {

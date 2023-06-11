@@ -9,7 +9,7 @@ export class Agendamento extends Identificadores {
   @Column({ length: 15 })
   UIDEstabelecimento: string;
 
-  @Column({ default: 'Aguardando' })
+  @Column({ default: 'Pendente' })
   status: string;
 
   @Column()

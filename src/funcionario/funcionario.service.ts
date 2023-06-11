@@ -19,6 +19,9 @@ import { AlreadyExist } from 'src/exceptions/alreadyExist.exception';
 import { FuncionarioServico } from './entities/funcionarioServico.entity';
 import { ServicosService } from 'src/servicos/servicos.service';
 import { CreateFuncionarioServicoDto } from './dto/create-funcionarioServico.dto';
+import { Agendamento } from 'src/agendamento/entities/agendamento.entity';
+import { AgendamentoService } from 'src/agendamento/agendamento.service';
+import { DatasDto } from 'src/agendamento/dto/datas.dto';
 
 @Injectable()
 export class FuncionarioService {
@@ -35,6 +38,8 @@ export class FuncionarioService {
     private readonly estabService: EstabelecimentoService,
     @Inject(ServicosService)
     private readonly servicoServ: ServicosService,
+    @Inject(AgendamentoService)
+    private readonly agendaServ: AgendamentoService,
   ) {
     this.hash = new Hashing();
   }
@@ -195,5 +200,9 @@ export class FuncionarioService {
     });
 
     return funcs;
+  }
+
+  async pegarAgendamentosDoFunc(id: number, datas: DatasDto) {
+    return await this.agendaServ.todosDoFuncio(id, datas);
   }
 }
