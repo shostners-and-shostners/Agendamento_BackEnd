@@ -9,20 +9,28 @@ import { ProprietarioJwt } from './strategys/proprietarioJwt.strategy';
 import { FuncJwtService } from './modules/funcJwtService.module';
 import { FuncJwt } from './strategys/funcJwt.strategy';
 import { FuncionarioModule } from 'src/funcionario/funcionario.module';
+import { ClienteModule } from 'src/cliente/cliente.module';
+import { LocalClienteStrategy } from './strategys/localCliente.strategy';
+import { ClienteJwtService } from './modules/clienteJwtService.module';
+import { ClienteJwt } from './strategys/clienteJwt.strategy';
 
 @Module({
   imports: [
     ProprietariosModule,
     PropJwtService,
     FuncJwtService,
+    ClienteJwtService,
     FuncionarioModule,
+    ClienteModule,
   ],
   providers: [
     AuthService,
-    LocalPropStrategy,
     ProprietarioJwt,
     FuncJwt,
+    ClienteJwt,
+    LocalPropStrategy,
     LocalFuncStrategy,
+    LocalClienteStrategy,
   ],
   controllers: [AuthController],
 })

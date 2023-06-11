@@ -8,6 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { EstabelecimentoModule } from './estabelecimento/estabelecimento.module';
 import { FuncionarioModule } from './funcionario/funcionario.module';
 import { ServicosModule } from './servicos/servicos.module';
+import { ClienteModule } from './cliente/cliente.module';
+import { AgendamentoModule } from './agendamento/agendamento.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { ServicosModule } from './servicos/servicos.module';
     EstabelecimentoModule,
     FuncionarioModule,
     ServicosModule,
+    ClienteModule,
+    AgendamentoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

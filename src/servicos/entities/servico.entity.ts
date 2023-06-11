@@ -7,6 +7,7 @@ import {
   JoinColumn,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
 import {
   IsNotEmpty,
@@ -18,6 +19,7 @@ import {
 } from 'class-validator';
 import { Categoria } from './categoria.entity';
 import { Funcionario } from 'src/funcionario/entities/funcionario.entity';
+import { Agendamento } from 'src/agendamento/entities/agendamento.entity';
 
 @Entity({ name: 'Servico' })
 export class Servico extends Identificadores {
@@ -63,4 +65,7 @@ export class Servico extends Identificadores {
     inverseJoinColumns: [{ name: 'funcionarioId' }],
   })
   funcionarios: Funcionario[];
+
+  @OneToMany(() => Agendamento, (agendamento) => agendamento.servico)
+  agendamentos: Agendamento[];
 }

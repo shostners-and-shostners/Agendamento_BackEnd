@@ -10,11 +10,13 @@ import {
 } from '@nestjs/common';
 import { PropLocalAuthGuard } from './guards/propLocalAuthGuard.guard';
 import { PropAuthDto } from './dto/propAuth.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { PropJwtAuthGuard } from './guards/propJwtAuthGuard.guard';
 import { FuncLocalAuthGuard } from './guards/funcLocalAuthGuard.guard';
 import { FuncAuthDto } from './dto/funcAuth.dto';
 import { FuncJwtAuthGuard } from './guards/funcJwtAuthGuard.guard';
+import { ClienteLocalAuthGuard } from './guards/clienteLocalAuthGuard.guard';
+import { ClienteAuthDto } from './dto/clienteAuth.dto';
+import { ClienteJwtAuthGuard } from './guards/ClienteJwtAuthGuard.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -30,6 +32,19 @@ export class AuthController {
   @Post('funcionario')
   authFunc(@Body() data: FuncAuthDto, @Req() { user }) {
     return this.authService.loginFuncionario(user);
+  }
+
+  @UseGuards(ClienteLocalAuthGuard)
+  @Post('cliente')
+  authCliente(@Body() data: ClienteAuthDto, @Req() { user }) {
+    console.log(user);
+    return this.authService.loginCliente(user);
+  }
+
+  @UseGuards(ClienteJwtAuthGuard)
+  @Get('testeClienteToken')
+  testeCliente(@Req() { user }) {
+    return user;
   }
 
   @UseGuards(PropJwtAuthGuard)

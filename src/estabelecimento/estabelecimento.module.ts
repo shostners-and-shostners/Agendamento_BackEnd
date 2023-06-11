@@ -10,13 +10,17 @@ import { VerificarHorarios } from 'src/class/ValidarHorarios';
 import { FuncionarioService } from 'src/funcionario/funcionario.service';
 import { FuncionarioModule } from 'src/funcionario/funcionario.module';
 import { ServicosModule } from 'src/servicos/servicos.module';
+import { ClienteModule } from 'src/cliente/cliente.module';
+import { AgendamentoModule } from 'src/agendamento/agendamento.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Estabelecimentos, HorariosEstabelecimento]),
-    ProprietariosModule,
-    ServicosModule,
+    forwardRef(() => ProprietariosModule),
+    forwardRef(() => ServicosModule),
+    forwardRef(() => ClienteModule),
     forwardRef(() => FuncionarioModule),
+    forwardRef(() => AgendamentoModule),
   ],
   controllers: [EstabelecimentoController],
   providers: [EstabelecimentoService, VerificarHorarios],

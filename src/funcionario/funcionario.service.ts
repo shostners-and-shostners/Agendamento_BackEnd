@@ -185,4 +185,15 @@ export class FuncionarioService {
     const fun = await this.verificaSeExisteId(id);
     return fun.servicos;
   }
+
+  async funcionarioPorServico(idServ: number) {
+    const serv = await this.servicoServ.acharServico(idServ);
+    console.log(serv);
+    const funcs = await this.funcRepo.find({
+      relations: ['expedientes'],
+      where: { servicos: serv },
+    });
+
+    return funcs;
+  }
 }

@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   Inject,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ServicosService } from './servicos.service';
 import { CreateServicoDto } from './dto/create-servico.dto';
@@ -26,18 +28,32 @@ export class ServicosController {
     return this.servicosService.criarServico(dados);
   }
 
-  @Get()
+  @Get('todos')
   async pegarTodos() {
     return await this.servicosService.pegarTodos();
   }
 
-  @Get(':id')
+  @Get('acharUm/:id')
   async findOne(@Param('id') id: string) {
     return await this.servicosService.acharServico(+id);
   }
 
+  @Get('/pegarFuncionarios')
+  async pegarFuncionarios(@Query('id', ParseIntPipe) id: number) {
+    console.log('nume ' + id);
+    return await this.servicosService.pegarFuncionarios(id);
+  }
+
+  @Get('/pegarServCat')
+  async pegarServCat(@Query('id', ParseIntPipe) id: number) {
+    return await this.servicosService.pegarTodosServCat(id);
+  }
+
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateServicoDto: UpdateServicoDto) {
-    return this.servicosService.editarServico(+id, updateServicoDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateServicoDto: UpdateServicoDto,
+  ) {
+    return await this.servicosService.editarServico(+id, updateServicoDto);
   }
 }

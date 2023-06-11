@@ -1,0 +1,75 @@
+import { HttpException, Inject, Injectable, forwardRef } from '@nestjs/common';
+import { CreateClienteDto } from './dto/create-cliente.dto';
+import { UpdateClienteDto } from './dto/update-cliente.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Cliente } from './entities/cliente.entity';
+import { Repository } from 'typeorm';
+import Hashing from 'src/class/hashing';
+import { EstabelecimentoService } from 'src/estabelecimento/estabelecimento.service';
+import { AlreadyExist } from 'src/exceptions/alreadyExist.exception';
+
+@Injectable()
+export class ClienteService {
+  hash: Hashing;
+  constructor(
+    @InjectRepository(Cliente)
+    private clienteRepo: Repository<Cliente>,
+    @Inject(EstabelecimentoService)
+    private readonly estabService: EstabelecimentoService,
+  ) {
+    this.hash = new Hashing();
+  }
+
+  async create(dados: CreateClienteDto) {
+    const cli = await this.buscarPorEmail(
+      dados.UIDEstabelecimento,
+      dados.email,
+    );
+    if (cli) throw new AlreadyExist('Email já existe para estabelecimento');
+    dados.senha = await this.hash.hashPass(dados.senha);
+    const novoCliente = this.clienteRepo.create(dados);
+    const clienteCriado = await this.clienteRepo.save(novoCliente);
+    return clienteCriado;
+  }
+
+  async buscarPorEmail(uid: string, email: string) {
+    console.log('uid:' + uid);
+    await this.estabService.pegarPorUiDD(uid);
+    const cliente = await this.clienteRepo.findOne({
+      where: { email: email, UIDEstabelecimento: uid },
+    });
+    return cliente;
+  }
+  async verificaSeExisteEmail(uid: string, email: string) {
+    const cliente = await this.buscarPorEmail(uid, email);
+    if (!cliente)
+      throw new HttpException(
+        'Cliente não existe para esse estabelecimento',
+        404,
+      );
+    return cliente;
+  }
+
+  async update(id: number, dados: UpdateClienteDto) {
+    await this.verificaSeExisteId(id);
+    await this.clienteRepo.update(id, dados);
+    return await this.verificaSeExisteId(id);
+  }
+
+  async verificaSeExisteId(id: number) {
+    const cliente = await this.clienteRepo.findOne({
+      where: { id },
+    });
+
+    if (!cliente) throw new HttpException('Cliente não existe', 404);
+    return cliente;
+  }
+
+  async todosDeUmEstabelicimento(uid: string) {
+    await this.estabService.pegarPorUiDD(uid);
+    const clientes = await this.clienteRepo.find({
+      where: { UIDEstabelecimento: uid },
+    });
+    return clientes;
+  }
+}

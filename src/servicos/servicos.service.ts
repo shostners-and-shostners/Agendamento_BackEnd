@@ -14,6 +14,7 @@ import { Repository } from 'typeorm';
 import { EstabelecimentoService } from 'src/estabelecimento/estabelecimento.service';
 import { Servico } from './entities/servico.entity';
 import { plainToClass } from 'class-transformer';
+import { FuncionarioService } from 'src/funcionario/funcionario.service';
 
 @Injectable()
 export class ServicosService {
@@ -24,6 +25,8 @@ export class ServicosService {
     private readonly servRepo: Repository<Servico>,
     @Inject(forwardRef(() => EstabelecimentoService))
     private readonly estabeServ: EstabelecimentoService,
+    @Inject(forwardRef(() => FuncionarioService))
+    private readonly funcServ: FuncionarioService,
   ) {}
   async criarCategoria(
     UID: string,
@@ -77,6 +80,15 @@ export class ServicosService {
     });
     return cat;
   }
+  async acharCategoriaPorId(id: number): Promise<Categoria> {
+    const cat = await this.categRepo.findOne({
+      where: {
+        id: id,
+      },
+    });
+    if (!cat) throw new NotFoundException('Categoria não existe');
+    return cat;
+  }
 
   async acharServico(id: number) {
     const serv = await this.servRepo.findOne({ where: { id: id } });
@@ -93,10 +105,19 @@ export class ServicosService {
     return await this.categRepo.find({ where: { UIDEstabelecimento: uid } });
   }
 
+  async pegarTodosServCat(id: number) {
+    const cat = await this.acharCategoriaPorId(id);
+    return await this.servRepo.find({ where: { categoria: cat } });
+  }
+
   async pegarTodosServ(uid: string) {
     return await this.servRepo.find({
       relations: ['categoria'],
       where: { UIDEstabelecimento: uid },
     });
+  }
+
+  async pegarFuncionarios(id: number) {
+    return await this.funcServ.funcionarioPorServico(id);
   }
 }

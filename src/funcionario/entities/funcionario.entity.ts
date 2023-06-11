@@ -13,6 +13,7 @@ import {
 import { ExpedienteFuncionario } from './expedienteFuncionario.entity';
 import { FuncionarioServico } from './funcionarioServico.entity';
 import { Servico } from 'src/servicos/entities/servico.entity';
+import { Agendamento } from 'src/agendamento/entities/agendamento.entity';
 
 @Entity('Funcionario')
 export class Funcionario extends Identificadores {
@@ -75,4 +76,7 @@ export class Funcionario extends Identificadores {
     inverseJoinColumns: [{ name: 'servicoId' }],
   })
   servicos: Servico[];
+
+  @OneToMany(() => Agendamento, (agendamento) => agendamento.funcionario)
+  agendamentos: Agendamento[];
 }

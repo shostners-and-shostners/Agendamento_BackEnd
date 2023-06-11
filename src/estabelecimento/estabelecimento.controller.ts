@@ -15,6 +15,7 @@ import {
   ParseIntPipe,
   UseInterceptors,
   UploadedFile,
+  Inject,
 } from '@nestjs/common';
 import { EstabelecimentoService } from './estabelecimento.service';
 import { CreateEstabelecimentoDto } from './dto/create-estabelecimento.dto';
@@ -23,12 +24,17 @@ import { PropJwtAuthGuard } from 'src/auth/guards/propJwtAuthGuard.guard';
 import { locationImgEstabe } from 'src/class/strings';
 import { editFileName, imageFileFilter } from 'src/class/file-upload.utils';
 import { FuncionarioService } from 'src/funcionario/funcionario.service';
+import { ClienteService } from 'src/cliente/cliente.service';
+import { AgendamentoService } from 'src/agendamento/agendamento.service';
 
 @Controller('estabelecimento')
 export class EstabelecimentoController {
   constructor(
     private readonly estabelecimentoService: EstabelecimentoService,
     private readonly funcionarioService: FuncionarioService,
+    private readonly clienteService: ClienteService,
+    @Inject(AgendamentoService)
+    private readonly agendaServ: AgendamentoService,
   ) {}
 
   @UseGuards(PropJwtAuthGuard)
@@ -93,6 +99,12 @@ export class EstabelecimentoController {
     return await this.funcionarioService.todosDeUmEstabelicimento(uidd);
   }
 
+  @Get('todosClientes/:UIDD')
+  async pegarTodosClientes(@Param('UIDD') uidd: string) {
+    console.log(uidd);
+    return await this.clienteService.todosDeUmEstabelicimento(uidd);
+  }
+
   @Get('todasCat/:UIDD')
   async pegarTodosCat(@Param('UIDD') uidd: string) {
     return await this.estabelecimentoService.pegarTodasCategorias(uidd);
@@ -101,5 +113,10 @@ export class EstabelecimentoController {
   @Get('todosServ/:UIDD')
   async pegarTodosServ(@Param('UIDD') uidd: string) {
     return await this.estabelecimentoService.pegarTodosServ(uidd);
+  }
+
+  @Get('todosAgendamentos/:UIDD')
+  async pegarTodosAgendamentos(@Param('UIDD') uidd: string) {
+    return await this.agendaServ.todosDoEstabelicimento(uidd);
   }
 }
