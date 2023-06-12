@@ -3,6 +3,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsOptional,
+  IsString,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -23,10 +24,10 @@ export class HorarioDiaSemanaDTO {
   @IsNotEmpty()
   diaSemana: DiaSemana;
 
-  @IsNotEmpty()
+  @IsString()
   inicio: string;
 
-  @IsNotEmpty()
+  @IsString()
   fim: string;
 
   @IsOptional()
