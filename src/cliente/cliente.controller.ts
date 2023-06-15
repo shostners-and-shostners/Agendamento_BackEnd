@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   UseGuards,
   Req,
+  HttpCode,
 } from '@nestjs/common';
 import { ClienteService } from './cliente.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
@@ -45,12 +46,14 @@ export class ClienteController {
   }
 
   @UseGuards(ClienteJwtAuthGuard)
-  @Get('todoAgendamentosToken')
+  @HttpCode(200)
+  @Post('todoAgendamentosToken')
   todoAgendamentosToken(@Req() { user }, @Body() datas: DatasDto) {
     return this.clienteService.pegarAgendamentosDoClie(user.id, datas);
   }
 
-  @Get('todoAgendamentos')
+  @HttpCode(200)
+  @Post('todoAgendamentos')
   todoAgendamentosT(
     @Query('idCli', ParseIntPipe) idClie: number,
     @Body() datas: DatasDto,

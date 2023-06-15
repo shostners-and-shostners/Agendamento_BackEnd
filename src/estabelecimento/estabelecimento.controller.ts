@@ -16,6 +16,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Inject,
+  HttpCode,
 } from '@nestjs/common';
 import { EstabelecimentoService } from './estabelecimento.service';
 import { CreateEstabelecimentoDto } from './dto/create-estabelecimento.dto';
@@ -116,7 +117,8 @@ export class EstabelecimentoController {
     return await this.estabelecimentoService.pegarTodosServ(uidd);
   }
 
-  @Get('todosAgendamentos/:UIDD')
+  @HttpCode(200)
+  @Post('todosAgendamentos/:UIDD')
   async pegarTodosAgendamentos(
     @Param('UIDD') uidd: string,
     @Body() datas: DatasDto,

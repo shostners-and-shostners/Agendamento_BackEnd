@@ -37,12 +37,14 @@ export class FuncionarioController {
   }
 
   @UseGuards(FuncJwtAuthGuard)
-  @Get('todoAgendamentosToken')
+  @HttpCode(200)
+  @Post('todoAgendamentosToken')
   todoAgendamentosToken(@Req() { user }, @Body() datas: DatasDto) {
     return this.funcionarioService.pegarAgendamentosDoFunc(user.id, datas);
   }
 
-  @Get('todoAgendamentos')
+  @HttpCode(200)
+  @Post('todoAgendamentos')
   todoAgendamentosT(
     @Query('idFunc', ParseIntPipe) idFunc: number,
     @Body() datas: DatasDto,
