@@ -36,6 +36,11 @@ export class FuncionarioController {
     return this.funcionarioService.verificaSeExisteId(user.id);
   }
 
+  @Get('pegarPorId')
+  pegarPorId(@Query('id', ParseIntPipe) id: number) {
+    return this.funcionarioService.verificaSeExisteId(id);
+  }
+
   @UseGuards(FuncJwtAuthGuard)
   @HttpCode(200)
   @Post('todoAgendamentosToken')
