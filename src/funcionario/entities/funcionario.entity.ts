@@ -54,6 +54,9 @@ export class Funcionario extends Identificadores {
   numero: string;
 
   @Column()
+  CEP: string;
+
+  @Column()
   complemento: string;
 
   @Column({ default: true })

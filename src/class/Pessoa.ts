@@ -33,6 +33,9 @@ export default abstract class Pessoa extends Identificadores {
   numero: string;
 
   @Column()
+  CEP: string;
+
+  @Column()
   complemento: string;
 
   @Column({ default: true })

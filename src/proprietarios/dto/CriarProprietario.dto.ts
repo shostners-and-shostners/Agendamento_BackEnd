@@ -52,5 +52,9 @@ export class CriarProprietarioDto {
 
   @IsString()
   @IsOptional()
+  CEP: string;
+
+  @IsString()
+  @IsOptional()
   complemento: string;
 }

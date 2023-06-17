@@ -45,6 +45,10 @@ export class CreateFuncionarioDto {
 
   @IsString()
   @IsOptional()
+  CEP: string;
+
+  @IsString()
+  @IsOptional()
   uf: string;
 
   @IsString()

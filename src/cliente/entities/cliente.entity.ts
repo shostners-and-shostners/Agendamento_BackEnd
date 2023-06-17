@@ -40,6 +40,9 @@ export class Cliente extends Identificadores {
   @Column()
   complemento: string;
 
+  @Column()
+  CEP: string;
+
   @Column({ default: true })
   ativo: boolean;
 

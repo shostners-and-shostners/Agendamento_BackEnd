@@ -48,6 +48,10 @@ export class CreateClienteDto {
 
   @IsString()
   @IsOptional()
+  CEP: string;
+
+  @IsString()
+  @IsOptional()
   numero: string;
 
   @IsString()
