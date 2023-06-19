@@ -31,6 +31,10 @@ export class CreateEstabelecimentoDto {
   uf: string;
 
   @IsString()
+  @IsOptional()
+  CEP: string;
+
+  @IsString()
   cidade: string;
 
   @IsString()

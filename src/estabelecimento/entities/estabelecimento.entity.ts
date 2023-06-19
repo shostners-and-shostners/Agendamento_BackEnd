@@ -22,6 +22,9 @@ export class Estabelecimentos extends Identificadores {
   nome: string;
 
   @Column()
+  CEP: string;
+
+  @Column()
   telefone: string;
 
   @Column()

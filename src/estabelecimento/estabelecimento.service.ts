@@ -71,8 +71,8 @@ export class EstabelecimentoService {
     return await this.estabeRepo.find();
   }
 
-  async update(idEstabe: number, dados: UpdateEstabelecimentoDto) {
-    const estabe = await this.verificaSeExiste(idEstabe);
+  async update(uidd: string, dados: UpdateEstabelecimentoDto) {
+    const estabe = await this.pegarPorUiDDSemImag(uidd);
 
     if (dados.horarios) {
       this.verificaHorario.validarHorarios(dados.horarios);
@@ -109,6 +109,18 @@ export class EstabelecimentoService {
       where: { id },
     });
     if (!esta) throw new HttpException('Estabelecimento não encontrado', 404);
+    return esta;
+  }
+
+  async pegarPorUiDDSemImag(uidd: string) {
+    const esta = await this.estabeRepo.findOneBy({
+      uid: uidd,
+    });
+
+    if (!esta) {
+      throw new NotFoundException('Estabelecimento não existe');
+    }
+
     return esta;
   }
 

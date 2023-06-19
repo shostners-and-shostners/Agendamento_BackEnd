@@ -17,6 +17,7 @@ import {
   UploadedFile,
   Inject,
   HttpCode,
+  BadRequestException,
 } from '@nestjs/common';
 import { EstabelecimentoService } from './estabelecimento.service';
 import { CreateEstabelecimentoDto } from './dto/create-estabelecimento.dto';
@@ -89,10 +90,12 @@ export class EstabelecimentoController {
   @UseGuards(PropJwtAuthGuard)
   @Patch('/update')
   async update(
-    @Query('id', ParseIntPipe) id: number,
+    @Query('uid') uid: string,
     @Body() dados: UpdateEstabelecimentoDto,
   ) {
-    return this.estabelecimentoService.update(id, dados);
+    console.log(uid);
+    if (!uid) throw new BadRequestException('uid invalido');
+    return this.estabelecimentoService.update(uid, dados);
   }
 
   @Get('todosFunc/:UIDD')
