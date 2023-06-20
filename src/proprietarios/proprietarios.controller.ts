@@ -9,11 +9,17 @@ import {
   Post,
   Query,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProprietariosService } from './proprietarios.service';
 import { UpdateProprietarioDto } from './dto/UpdateProprietario.dto';
 import { PropJwtAuthGuard } from 'src/auth/guards/propJwtAuthGuard.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { locationImgProp } from 'src/class/strings';
+import { editFileName, imageFileFilter } from 'src/class/file-upload.utils';
 @Controller('proprietarios')
 export class ProprietariosController {
   constructor(private readonly proprietariosService: ProprietariosService) {}
@@ -45,5 +51,23 @@ export class ProprietariosController {
   @Get('/pegarum')
   async getOne(@Query('id') id) {
     return await this.proprietariosService.pegarUm(id);
+  }
+
+  @UseGuards(PropJwtAuthGuard)
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      storage: diskStorage({
+        destination: locationImgProp,
+        filename: editFileName,
+      }),
+      fileFilter: imageFileFilter,
+    }),
+  )
+  @Post('/image')
+  async uploadImage(
+    @Req() { user },
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.proprietariosService.colocarAvatar(user.id, file);
   }
 }

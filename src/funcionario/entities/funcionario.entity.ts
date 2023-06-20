@@ -50,6 +50,9 @@ export class Funcionario extends Identificadores {
   @Column()
   logradouro: string;
 
+  @Column({ default: 'funcAvatar.png' })
+  urlFoto: string;
+
   @Column()
   numero: string;
 

@@ -22,6 +22,8 @@ import { CreateFuncionarioServicoDto } from './dto/create-funcionarioServico.dto
 import { Agendamento } from 'src/agendamento/entities/agendamento.entity';
 import { AgendamentoService } from 'src/agendamento/agendamento.service';
 import { DatasDto } from 'src/agendamento/dto/datas.dto';
+import { deleteFile } from 'src/class/file-upload.utils';
+import { locationImgFunc } from 'src/class/strings';
 
 @Injectable()
 export class FuncionarioService {
@@ -204,5 +206,26 @@ export class FuncionarioService {
 
   async pegarAgendamentosDoFunc(id: number, datas: DatasDto) {
     return await this.agendaServ.todosDoFuncio(id, datas);
+  }
+
+  async colocarAvatar(uid: number, file: Express.Multer.File) {
+    const func = await this.verificaSeExisteId(uid);
+    console.log('Teste');
+    if (file) {
+      if (func.urlFoto != 'funcAvatar.png')
+        deleteFile(locationImgFunc + func.urlFoto);
+
+      func.urlFoto = file.filename;
+      delete func.expedientes;
+      delete func.agendamentos;
+      delete func.servicos;
+      await this.funcRepo.update(func.id, func);
+      return func;
+    } else {
+      throw new HttpException(
+        { msg: 'Arquivo não foi enviado corretamente ' },
+        400,
+      );
+    }
   }
 }

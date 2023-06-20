@@ -12,6 +12,8 @@ import {
   Req,
   HttpStatus,
   HttpCode,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { FuncionarioService } from './funcionario.service';
 import { CreateFuncionarioDto } from './dto/create-funcionario.dto';
@@ -20,9 +22,14 @@ import { FuncJwtAuthGuard } from 'src/auth/guards/funcJwtAuthGuard.guard';
 import { CreateFuncionarioServicoDto } from './dto/create-funcionarioServico.dto';
 import { use } from 'passport';
 import { DatasDto } from 'src/agendamento/dto/datas.dto';
+import { locationImgFunc } from 'src/class/strings';
+import { editFileName, imageFileFilter } from 'src/class/file-upload.utils';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @Controller('funcionario')
 export class FuncionarioController {
+  clienteService: any;
   constructor(private readonly funcionarioService: FuncionarioService) {}
 
   @Post('criar')
@@ -80,5 +87,23 @@ export class FuncionarioController {
   @Post('removerServico')
   async removerServico(@Body() dados: CreateFuncionarioServicoDto) {
     return await this.funcionarioService.removeServico(dados);
+  }
+
+  @UseGuards(FuncJwtAuthGuard)
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      storage: diskStorage({
+        destination: locationImgFunc,
+        filename: editFileName,
+      }),
+      fileFilter: imageFileFilter,
+    }),
+  )
+  @Post('/image')
+  async uploadImage(
+    @Req() { user },
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.funcionarioService.colocarAvatar(user.id, file);
   }
 }

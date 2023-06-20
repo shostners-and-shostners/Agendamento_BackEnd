@@ -9,6 +9,8 @@ import { EstabelecimentoService } from 'src/estabelecimento/estabelecimento.serv
 import { AlreadyExist } from 'src/exceptions/alreadyExist.exception';
 import { AgendamentoService } from 'src/agendamento/agendamento.service';
 import { DatasDto } from 'src/agendamento/dto/datas.dto';
+import { deleteFile } from 'src/class/file-upload.utils';
+import { locationImgCliente } from 'src/class/strings';
 
 @Injectable()
 export class ClienteService {
@@ -85,5 +87,23 @@ export class ClienteService {
 
   async pegarAgendamentosDoClie(id: number, datas: DatasDto) {
     return await this.agendaServ.todosDoClie(id, datas);
+  }
+
+  async colocarAvatar(uid: number, file: Express.Multer.File) {
+    const cliente = await this.verificaSeExisteId(uid);
+    console.log('Teste');
+    if (file) {
+      if (cliente.urlFoto != 'userAvatar.png')
+        deleteFile(locationImgCliente + cliente.urlFoto);
+
+      cliente.urlFoto = file.filename;
+      await this.clienteRepo.update(cliente.id, cliente);
+      return cliente;
+    } else {
+      throw new HttpException(
+        { msg: 'Arquivo não foi enviado corretamente ' },
+        400,
+      );
+    }
   }
 }

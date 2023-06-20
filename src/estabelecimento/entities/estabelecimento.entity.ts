@@ -25,6 +25,9 @@ export class Estabelecimentos extends Identificadores {
   CEP: string;
 
   @Column()
+  complemento: string;
+
+  @Column()
   telefone: string;
 
   @Column()

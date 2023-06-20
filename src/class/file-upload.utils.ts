@@ -54,7 +54,7 @@ export const collectFileName = (req, file: Express.Multer.File, callback) => {
 };
 
 export const imageFileFilter = (req, file, callback) => {
-  if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+  if (!file.originalname.toLowerCase().match(/\.(jpg|jpeg|png)$/)) {
     return callback(
       new HttpException(
         'Arquivo precisa ser uma imagem',

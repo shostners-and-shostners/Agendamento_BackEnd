@@ -1,5 +1,5 @@
 import { Proprietarios } from './entities/proprietarios.entity';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CriarProprietarioDto } from './dto/CriarProprietario.dto';
@@ -9,6 +9,8 @@ import { UpdateProprietarioDto } from './dto/UpdateProprietario.dto';
 import { response } from 'express';
 import { CreateAgendamentoADMDto } from 'src/agendamento/dto/create-agendamentoADM.dto';
 import { CreateClienteDto } from 'src/cliente/dto/create-cliente.dto';
+import { locationImgProp } from 'src/class/strings';
+import { deleteFile } from 'src/class/file-upload.utils';
 
 @Injectable()
 export class ProprietariosService {
@@ -63,5 +65,23 @@ export class ProprietariosService {
 
     if (!prop) throw new NotFoundException();
     return prop;
+  }
+
+  async colocarAvatar(uid: number, file: Express.Multer.File) {
+    const prop = await this.pegarUm(uid);
+    console.log('Teste');
+    if (file) {
+      if (prop.urlFoto != 'propAvatar.png')
+        deleteFile(locationImgProp + prop.urlFoto);
+
+      prop.urlFoto = file.filename;
+      await this.proprietariosRepository.update(prop.id, prop);
+      return prop;
+    } else {
+      throw new HttpException(
+        { msg: 'Arquivo não foi enviado corretamente ' },
+        400,
+      );
+    }
   }
 }
