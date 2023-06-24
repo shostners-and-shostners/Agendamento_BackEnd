@@ -28,14 +28,14 @@ export class ServicosService {
     @Inject(forwardRef(() => FuncionarioService))
     private readonly funcServ: FuncionarioService,
   ) {}
+
   async criarCategoria(
     UID: string,
     dados: CreateCategoriaDto,
   ): Promise<Categoria> {
-    let cat = await this.acharCategoriaPorNome(
-      dados.UIDEstabelecimento,
-      dados.nome,
-    );
+    console.log(dados);
+    let cat = await this.acharCategoriaPorNome(UID, dados.nome);
+
     if (!cat) {
       dados.UIDEstabelecimento = UID;
       cat = await this.categRepo.save(dados);
