@@ -17,8 +17,8 @@ export const mailerConfig: MailerOptions = {
     // ignoreTLS: false,
     // secure: true,
     auth: {
-      user: 'jeancar1323@gmail.com',
-      pass: 'xsmtpsib-3419da85b0d1d6b3f596c3a266948d3b5e385abd4b94db3f8183e3b33155599b-BKYcELkI5dhJ6yzn',
+      user: process.env.EMAILLOGIN,
+      pass: process.env.EMAILSENHA,
     },
     // tls: {
     //   rejectUnauthorized: false,

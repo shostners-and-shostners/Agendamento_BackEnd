@@ -133,6 +133,7 @@ export class AuthService {
   }
 
   async checkToken(token: string) {
+    console.log(process.env.EMAILSENHA);
     await this.propService.pegarPeloToken(token);
   }
 }
