@@ -1,12 +1,21 @@
 import { Cliente } from './../cliente/entities/cliente.entity';
 import { JwtService } from '@nestjs/jwt';
 import { ProprietariosService } from './../proprietarios/proprietarios.service';
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  HttpCode,
+  HttpException,
+  Inject,
+  Injectable,
+  HttpStatus,
+} from '@nestjs/common';
 import Hashing from 'src/class/hashing';
 import { Proprietarios } from 'src/proprietarios/entities/proprietarios.entity';
 import { FuncionarioService } from 'src/funcionario/funcionario.service';
 import { Funcionario } from 'src/funcionario/entities/funcionario.entity';
 import { ClienteService } from 'src/cliente/cliente.service';
+import { mudarSenhaDto } from 'src/class/mudarSenha.dto';
+import { MailerService } from '@nestjs-modules/mailer';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +30,7 @@ export class AuthService {
     private funcJWTService: JwtService,
     @Inject('ClienteJwtService')
     private clienteJWTService: JwtService,
+    private mailerService: MailerService,
   ) {
     this.hash = new Hashing();
   }
@@ -88,5 +98,41 @@ export class AuthService {
     return {
       token: this.clienteJWTService.sign(payload),
     };
+  }
+
+  async propMudarSenha(dados: mudarSenhaDto) {
+    const prop = await this.propService.pegarPeloToken(dados.token);
+    await this.propService.mudarSenha(prop, dados.senha);
+  }
+
+  async propRecuperarSenha(email: string) {
+    const prop = await this.propService.buscarUmPorEmail(email);
+    prop.tokenRecuperar = randomBytes(32).toString('hex');
+    await this.propService.save(prop);
+
+    const mail = {
+      to: prop.email,
+      from: 'agendamento@snet.com',
+      subject: 'Recuperação de senha',
+      template: './reset-pass',
+      context: {
+        token: prop.tokenRecuperar,
+      },
+    };
+
+    try {
+      this.mailerService.sendMail(mail);
+    } catch (error) {
+      throw new HttpException(
+        'Erro ao enviar o email:' + error,
+        HttpStatus.BAD_GATEWAY,
+      );
+    }
+
+    return prop.tokenRecuperar;
+  }
+
+  async checkToken(token: string) {
+    await this.propService.pegarPeloToken(token);
   }
 }

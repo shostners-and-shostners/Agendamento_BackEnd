@@ -1,5 +1,11 @@
 import { Proprietarios } from './entities/proprietarios.entity';
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CriarProprietarioDto } from './dto/CriarProprietario.dto';
@@ -83,5 +89,24 @@ export class ProprietariosService {
         400,
       );
     }
+  }
+
+  async mudarSenha(prop: Proprietarios, senha: string) {
+    prop.senha = await this.hash.hashPass(senha);
+    prop.tokenRecuperar = null;
+    await this.proprietariosRepository.save(prop);
+  }
+
+  async save(prop: Proprietarios) {
+    await this.proprietariosRepository.save(prop);
+  }
+
+  async pegarPeloToken(token: string) {
+    const prop = await this.proprietariosRepository.findOne({
+      where: { tokenRecuperar: token },
+    });
+
+    if (!prop) throw new HttpException('Token inválido', HttpStatus.FORBIDDEN);
+    return prop;
   }
 }

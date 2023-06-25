@@ -24,6 +24,7 @@ import { AgendamentoService } from 'src/agendamento/agendamento.service';
 import { DatasDto } from 'src/agendamento/dto/datas.dto';
 import { deleteFile } from 'src/class/file-upload.utils';
 import { locationImgFunc } from 'src/class/strings';
+import { mudarSenhaDto } from 'src/class/mudarSenha.dto';
 
 @Injectable()
 export class FuncionarioService {
@@ -227,5 +228,10 @@ export class FuncionarioService {
         400,
       );
     }
+  }
+
+  async mudarSenha(func: Funcionario, senha: string) {
+    func.senha = await this.hash.hashPass(senha);
+    await this.funcRepo.save(func);
   }
 }

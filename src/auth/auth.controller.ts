@@ -3,6 +3,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  Param,
   Post,
   Req,
   Request,
@@ -17,6 +19,8 @@ import { FuncJwtAuthGuard } from './guards/funcJwtAuthGuard.guard';
 import { ClienteLocalAuthGuard } from './guards/clienteLocalAuthGuard.guard';
 import { ClienteAuthDto } from './dto/clienteAuth.dto';
 import { ClienteJwtAuthGuard } from './guards/ClienteJwtAuthGuard.guard';
+import { mudarSenhaDto } from 'src/class/mudarSenha.dto';
+import { EmailDto } from './dto/email.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -57,5 +61,23 @@ export class AuthController {
   @Get('/testeFuncToken')
   testeFunc(@Req() { user }) {
     return user;
+  }
+
+  @HttpCode(200)
+  @Post('/proprietario/mudarSenha')
+  async mudarSenhaFunc(@Body() dados: mudarSenhaDto) {
+    return await this.authService.propMudarSenha(dados);
+  }
+
+  @HttpCode(200)
+  @Post('/proprietario/recuperarSenha')
+  async mudarSenhaProp(@Body() dados: EmailDto) {
+    return await this.authService.propRecuperarSenha(dados.email);
+  }
+
+  @HttpCode(200)
+  @Get('/proprietario/verificarToken/:token')
+  async verificarToken(@Param('token') token: string) {
+    return await this.authService.checkToken(token);
   }
 }

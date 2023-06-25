@@ -10,10 +10,13 @@ import { FuncionarioModule } from './funcionario/funcionario.module';
 import { ServicosModule } from './servicos/servicos.module';
 import { ClienteModule } from './cliente/cliente.module';
 import { AgendamentoModule } from './agendamento/agendamento.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { mailerConfig } from './config/mailer.config';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(configService.getTypeOrmConfig()),
+    MailerModule.forRoot(mailerConfig),
     ProprietariosModule,
     AuthModule,
     EstabelecimentoModule,

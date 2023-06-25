@@ -7,6 +7,9 @@ export class Proprietarios extends Pessoa {
   @Column({ default: 'propAvatar.png' })
   urlFoto: string;
 
+  @Column()
+  tokenRecuperar: string;
+
   @OneToMany(
     () => Estabelecimentos,
     (estabelecimento) => estabelecimento.proprietarios,
